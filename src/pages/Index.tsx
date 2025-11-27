@@ -3,10 +3,13 @@ import { Button } from "@/components/ui/button";
 import { GameCanvas } from "@/components/GameCanvas";
 import { StoneCollection } from "@/components/StoneCollection";
 import { SnapEffect } from "@/components/SnapEffect";
+import { Leaderboard } from "@/components/Leaderboard";
+import { SubmitScoreDialog } from "@/components/SubmitScoreDialog";
 import { StoneType, stoneTypes } from "@/components/InfinityStone";
+import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { toast } from "sonner";
 
-type GameState = 'menu' | 'playing' | 'gameover' | 'victory';
+type GameState = 'menu' | 'playing' | 'gameover' | 'victory' | 'submitting';
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>('menu');
@@ -17,6 +20,8 @@ const Index = () => {
   const [collectedStones, setCollectedStones] = useState<Record<StoneType, number>>(
     () => stoneTypes.reduce((acc, type) => ({ ...acc, [type]: 0 }), {} as Record<StoneType, number>)
   );
+  
+  const { entries, isLoading, submitScore } = useLeaderboard();
 
   const allStonesCollected = stoneTypes.every(type => collectedStones[type] > 0);
   const difficulty = Math.min(5, Math.floor(score / 500) + 1);
@@ -52,8 +57,7 @@ const Index = () => {
     setLives(prev => {
       const newLives = prev - 1;
       if (newLives <= 0) {
-        setGameState('gameover');
-        toast.error("Game Over!");
+        setGameState('submitting');
       }
       return newLives;
     });
@@ -74,8 +78,20 @@ const Index = () => {
     toast.success("The snap is complete! +1000 points!");
     
     if (snapCount >= 2) {
-      setGameState('victory');
+      setGameState('submitting');
     }
+  };
+
+  const handleSubmitScore = async (playerName: string) => {
+    const success = await submitScore(playerName, score, snapCount);
+    if (success) {
+      toast.success("Score submitted to leaderboard!");
+    }
+    setGameState(snapCount >= 3 ? 'victory' : 'gameover');
+  };
+
+  const handleSkipSubmit = () => {
+    setGameState(snapCount >= 3 ? 'victory' : 'gameover');
   };
 
   return (
@@ -116,7 +132,18 @@ const Index = () => {
           <div className="text-sm text-muted-foreground mt-4">
             <p>Move mouse/finger to control the gauntlet</p>
           </div>
+
+          <Leaderboard entries={entries} isLoading={isLoading} />
         </div>
+      )}
+
+      {gameState === 'submitting' && (
+        <SubmitScoreDialog
+          score={score}
+          snapsCompleted={snapCount}
+          onSubmit={handleSubmitScore}
+          onSkip={handleSkipSubmit}
+        />
       )}
 
       {gameState === 'playing' && (
