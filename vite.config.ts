@@ -4,7 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/movie-verse-craft/",
+  base: "/movie-verse/",
   server: {
     host: "::",
     port: 8080,
