@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@400;700;900&display=swap');
+
+@layer base {
+  :root {
+    --background: 240 20% 6%;
+    --foreground: 45 100% 95%;
+
+    --card: 260 30% 12%;
+    --card-foreground: 45 100% 95%;
+
+    --popover: 260 30% 12%;
+    --popover-foreground: 45 100% 95%;
+
+    --primary: 280 80% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 45 100% 50%;
+    --secondary-foreground: 240 20% 6%;
+
+    --muted: 260 20% 18%;
+    --muted-foreground: 260 10% 60%;
+
+    --accent: 280 100% 70%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 280 40% 25%;
+    --input: 280 40% 25%;
+    --ring: 280 80% 55%;
+
+    --radius: 0.75rem;
+
+    /* Infinity Stone Colors */
+    --stone-space: 220 100% 50%;
+    --stone-mind: 55 100% 50%;
+    --stone-reality: 0 100% 50%;
+    --stone-power: 280 100% 50%;
+    --stone-time: 120 100% 40%;
+    --stone-soul: 25 100% 50%;
+
+    /* Cosmic Effects */
+    --glow-purple: 0 0 30px hsl(280 100% 60% / 0.6);
+    --glow-gold: 0 0 30px hsl(45 100% 50% / 0.6);
+    --gradient-cosmic: linear-gradient(135deg, hsl(280 60% 15%) 0%, hsl(240 40% 8%) 50%, hsl(300 50% 12%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(35 100% 60%) 100%);
+    --gradient-snap: linear-gradient(135deg, hsl(280 100% 60%) 0%, hsl(45 100% 50%) 50%, hsl(280 100% 60%) 100%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer components {
+  .cosmic-bg {
+    background: var(--gradient-cosmic);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cosmic-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(2px 2px at 40px 70px, hsl(var(--foreground) / 0.2), transparent),
+      radial-gradient(1px 1px at 90px 40px, hsl(var(--foreground) / 0.4), transparent),
+      radial-gradient(2px 2px at 130px 80px, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(1px 1px at 160px 120px, hsl(var(--foreground) / 0.2), transparent);
+    background-size: 200px 200px;
+    animation: stars 100s linear infinite;
+  }
+
+  .glow-text {
+    text-shadow: var(--glow-purple), 0 0 60px hsl(280 100% 60% / 0.4);
+  }
+
+  .glow-gold {
+    text-shadow: var(--glow-gold), 0 0 60px hsl(45 100% 50% / 0.4);
+  }
+
+  .stone-glow {
+    filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor);
+  }
+
+  .snap-effect {
+    animation: snap 0.5s ease-out forwards;
+  }
+
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes stars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-200px); }
+}
+
+@keyframes snap {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.8; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor); }
+  50% { filter: drop-shadow(0 0 20px currentColor) drop-shadow(0 0 40px currentColor); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fall {
+  0% { transform: translateY(-100px) rotate(0deg); }
+  100% { transform: translateY(100vh) rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
