@@ -34,6 +34,7 @@ jobs:
         working-directory: ./
 
       - name: Deploy to gh-pages
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -47,4 +48,5 @@ jobs:
           git init
           git add -A
           git commit -m "ci: deploy pages" --allow-empty
-          git push -f https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:gh-pages
+          git remote add origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git push -f origin HEAD:gh-pages
