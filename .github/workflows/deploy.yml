@@ -1,15 +1,24 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
       - publish-clean
       - main
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -24,9 +33,20 @@ jobs:
         run: npm run build
         working-directory: ./
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
+      - name: Deploy to gh-pages
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
+            echo "Error: dist directory does not exist or is empty"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cd dist
+          git init
+          git add -A
+          git commit -m "ci: deploy pages" --allow-empty
+          git remote add origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git push -f origin HEAD:gh-pages
